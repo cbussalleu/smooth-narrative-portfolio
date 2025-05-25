@@ -26,12 +26,12 @@ const CustomCursor: React.FC<CustomCursorProps> = ({ showCursor }) => {
         ${showCursor ? 'opacity-100 scale-100' : 'opacity-0 scale-75'}
       `}
       style={{
-        left: mousePosition.x - 100,
+        left: mousePosition.x - 150,
         top: mousePosition.y - 30,
         transform: 'translate(-50%, -50%)'
       }}
     >
-      <div className="bg-black text-white px-4 py-3 text-sm font-medium shadow-lg">
+      <div className="bg-black text-white px-6 py-3 text-sm font-medium shadow-lg border border-gray-300">
         Scroll to browse my core capabilities
       </div>
     </div>

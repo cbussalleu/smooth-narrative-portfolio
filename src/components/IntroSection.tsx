@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
+import AnimatedText from './AnimatedText';
 
 interface IntroSectionProps {
   onBrowseClick: () => void;
@@ -18,13 +19,13 @@ const IntroSection: React.FC<IntroSectionProps> = ({ onBrowseClick }) => {
       setScrollY(currentScrollY);
 
       // Animaciones secuenciales basadas en el scroll
-      if (currentScrollY > 100) {
+      if (currentScrollY > 300) {
         setShowFirstParagraph(true);
       }
-      if (currentScrollY > 300) {
+      if (currentScrollY > 800) {
         setShowSecondParagraph(true);
       }
-      if (currentScrollY > 500) {
+      if (currentScrollY > 1200) {
         setShowButton(true);
       }
     };
@@ -33,32 +34,43 @@ const IntroSection: React.FC<IntroSectionProps> = ({ onBrowseClick }) => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Calcular la posición del título basada en el scroll
-  const titleTransform = Math.min(scrollY * 0.5, 200);
-  const titleScale = Math.max(1 - scrollY * 0.0005, 0.7);
+  // Calcular la animación del título: desde el centro hacia arriba-izquierda
+  const titleProgress = Math.min(scrollY / 1000, 1);
+  const titleX = -50 + (titleProgress * 50); // De -50% a 0%
+  const titleY = -50 + (titleProgress * 50); // De -50% a 0%
+  const titleScale = 0.8 + (titleProgress * 0.2); // De 0.8 a 1
 
   return (
-    <section className="min-h-[300vh] relative">
+    <section className="min-h-[400vh] relative">
       <div className="sticky top-0 h-screen flex items-center px-8 py-16 max-w-7xl mx-auto overflow-hidden">
-        <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16 items-start">
-          {/* Left side - Main heading with scroll animation */}
-          <div className="order-2 md:order-1 relative">
-            <h1 
-              className="text-6xl md:text-7xl lg:text-8xl font-bold leading-tight uppercase transition-all duration-1000 ease-out"
-              style={{
-                transform: `translateY(${50 - titleTransform}vh) scale(${titleScale})`,
-                transformOrigin: 'top left'
-              }}
-            >
-              Hi, I'm Christian,<br />
-              <span className="block mt-2">
-                Service Designer based in Barcelona.
-              </span>
+        <div className="w-full relative">
+          {/* Main heading - animado desde el centro hacia arriba-izquierda */}
+          <div 
+            className="absolute inset-0 flex items-center justify-center md:block"
+            style={{
+              transform: `translate(${titleX}%, ${titleY}%) scale(${titleScale})`,
+              transformOrigin: 'center center',
+              transition: 'transform 1s ease-out'
+            }}
+          >
+            <h1 className="text-6xl md:text-7xl lg:text-8xl font-bold leading-tight uppercase">
+              <AnimatedText 
+                text="HI, I'M CHRISTIAN,"
+                isVisible={true}
+                type="title"
+              />
+              <br />
+              <AnimatedText 
+                text="SERVICE DESIGNER BASED IN BARCELONA."
+                isVisible={true}
+                delay={1000}
+                type="title"
+              />
             </h1>
           </div>
 
-          {/* Right side - Sequential paragraphs */}
-          <div className="space-y-8 order-1 md:order-2 relative h-full flex flex-col justify-center">
+          {/* Right side paragraphs - aparecen secuencialmente desde abajo */}
+          <div className="absolute right-0 top-1/2 w-1/2 max-w-md space-y-8">
             {/* First paragraph */}
             <div 
               className={`
@@ -70,7 +82,10 @@ const IntroSection: React.FC<IntroSectionProps> = ({ onBrowseClick }) => {
               `}
             >
               <p className="text-lg md:text-xl leading-relaxed text-gray-700">
-                I design services that make sense from the inside of organizations and feel right from the outside.
+                <AnimatedText 
+                  text="I design services that make sense from the inside of organizations and feel right from the outside."
+                  isVisible={showFirstParagraph}
+                />
               </p>
             </div>
 
@@ -83,10 +98,12 @@ const IntroSection: React.FC<IntroSectionProps> = ({ onBrowseClick }) => {
                   : 'opacity-0 translate-y-20'
                 }
               `}
-              style={{ transitionDelay: '200ms' }}
             >
               <p className="text-lg md:text-xl leading-relaxed text-gray-700">
-                I work on complex projects, full of uncertainty, with teams that need to move forward without losing sight of what really matters.
+                <AnimatedText 
+                  text="I work on complex projects, full of uncertainty, with teams that need to move forward without losing sight of what really matters."
+                  isVisible={showSecondParagraph}
+                />
               </p>
             </div>
 
@@ -99,7 +116,6 @@ const IntroSection: React.FC<IntroSectionProps> = ({ onBrowseClick }) => {
                   : 'opacity-0 translate-y-20'
                 }
               `}
-              style={{ transitionDelay: '400ms' }}
             >
               <button
                 onClick={onBrowseClick}
