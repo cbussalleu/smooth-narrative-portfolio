@@ -23,31 +23,61 @@ const HorizontalScrollSection: React.FC<HorizontalScrollSectionProps> = ({
   index 
 }) => {
   const [isImageHovered, setIsImageHovered] = useState(false);
+  const [scrollProgress, setScrollProgress] = useState(0);
   const sectionRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (!sectionRef.current) return;
+      
+      const rect = sectionRef.current.getBoundingClientRect();
+      const progress = Math.max(0, Math.min(1, (window.innerWidth - rect.left) / window.innerWidth));
+      setScrollProgress(progress);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    handleScroll();
+    
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Calcular las transformaciones basadas en el progreso del scroll
+  const titleTransform = scrollProgress * 100;
+  const imageTransform = Math.max(0, (scrollProgress - 0.3) * 100);
+  const textTransform = Math.max(0, (scrollProgress - 0.6) * 100);
 
   return (
     <div 
       ref={sectionRef}
-      className="flex-shrink-0 w-screen h-screen flex items-center justify-center px-8 md:px-16"
+      className="flex-shrink-0 w-screen h-screen flex items-center justify-center px-8 md:px-16 relative overflow-hidden"
     >
-      <div className="max-w-7xl w-full grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16 items-center">
-        {/* Text Content */}
-        <div className="space-y-6 order-2 md:order-1">
+      <div className="max-w-7xl w-full h-full relative">
+        {/* Main capability title - slides in first and positions top-left */}
+        <div 
+          className="absolute top-16 left-0 transition-all duration-1000 ease-out"
+          style={{
+            transform: `translateX(${-100 + titleTransform}vw)`,
+            opacity: Math.min(1, scrollProgress * 2)
+          }}
+        >
           <div className="space-y-4">
             <div className="text-sm text-gray-500 font-medium">
               {String(index + 1).padStart(2, '0')}
             </div>
-            <h2 className="text-4xl md:text-5xl font-bold leading-tight">
+            <h2 className="text-4xl md:text-5xl font-bold leading-tight max-w-md">
               {capability}
             </h2>
           </div>
-          <p className="text-lg md:text-xl text-gray-600 leading-relaxed max-w-md">
-            {description}
-          </p>
         </div>
 
-        {/* Project Image */}
-        <div className="relative order-1 md:order-2">
+        {/* Project Image - slides in second and positions bottom-left */}
+        <div 
+          className="absolute bottom-16 left-0 w-1/2 max-w-md transition-all duration-1000 ease-out"
+          style={{
+            transform: `translateX(${-100 + imageTransform}vw)`,
+            opacity: Math.min(1, Math.max(0, (scrollProgress - 0.3) * 2))
+          }}
+        >
           <div 
             className="relative overflow-hidden bg-gray-100 aspect-[4/3] cursor-pointer transition-transform duration-500 ease-out hover:scale-105"
             onMouseEnter={() => setIsImageHovered(true)}
@@ -81,6 +111,19 @@ const HorizontalScrollSection: React.FC<HorizontalScrollSectionProps> = ({
               </div>
             </div>
           </div>
+        </div>
+
+        {/* Description text - slides in last and positions bottom-right */}
+        <div 
+          className="absolute bottom-16 right-0 w-1/3 max-w-md transition-all duration-1000 ease-out"
+          style={{
+            transform: `translateX(${100 - textTransform}vw)`,
+            opacity: Math.min(1, Math.max(0, (scrollProgress - 0.6) * 2))
+          }}
+        >
+          <p className="text-lg md:text-xl text-gray-600 leading-relaxed">
+            {description}
+          </p>
         </div>
       </div>
     </div>
