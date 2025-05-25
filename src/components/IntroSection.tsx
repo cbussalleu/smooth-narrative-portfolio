@@ -36,9 +36,9 @@ const IntroSection: React.FC<IntroSectionProps> = ({ onBrowseClick }) => {
 
   // Calcular la animación del título: desde el centro hacia arriba-izquierda
   const titleProgress = Math.min(scrollY / 1000, 1);
-  const titleX = -50 + (titleProgress * 50); // De -50% a 0%
-  const titleY = -50 + (titleProgress * 50); // De -50% a 0%
-  const titleScale = 0.8 + (titleProgress * 0.2); // De 0.8 a 1
+  const titleX = titleProgress * 30; // Movimiento más suave hacia la izquierda
+  const titleY = titleProgress * 40; // Movimiento más suave hacia arriba
+  const titleScale = 0.6 + (titleProgress * 0.4); // De 0.6 a 1
 
   return (
     <section className="min-h-[400vh] relative">
@@ -46,18 +46,19 @@ const IntroSection: React.FC<IntroSectionProps> = ({ onBrowseClick }) => {
         <div className="w-full relative">
           {/* Main heading - animado desde el centro hacia arriba-izquierda */}
           <div 
-            className="absolute inset-0 flex items-center justify-center md:block"
+            className="absolute inset-0 flex items-center justify-center"
             style={{
-              transform: `translate(${titleX}%, ${titleY}%) scale(${titleScale})`,
+              transform: `translate(-${titleX}%, -${titleY}%) scale(${titleScale})`,
               transformOrigin: 'center center',
               transition: 'transform 1s ease-out'
             }}
           >
-            <h1 className="text-6xl md:text-7xl lg:text-8xl font-bold leading-tight uppercase">
+            <h1 className="text-6xl md:text-7xl lg:text-8xl font-bold leading-tight uppercase text-center md:text-left">
               <AnimatedText 
                 text="HI, I'M CHRISTIAN,"
                 isVisible={true}
                 type="title"
+                className="block"
               />
               <br />
               <AnimatedText 
@@ -65,12 +66,13 @@ const IntroSection: React.FC<IntroSectionProps> = ({ onBrowseClick }) => {
                 isVisible={true}
                 delay={1000}
                 type="title"
+                className="block"
               />
             </h1>
           </div>
 
           {/* Right side paragraphs - aparecen secuencialmente desde abajo */}
-          <div className="absolute right-0 top-1/2 w-1/2 max-w-md space-y-8">
+          <div className="absolute right-8 top-1/2 w-full max-w-md space-y-8 md:w-1/2">
             {/* First paragraph */}
             <div 
               className={`
