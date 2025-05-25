@@ -50,8 +50,7 @@ const HorizontalScrollContainer: React.FC<HorizontalScrollContainerProps> = ({ c
         className="flex overflow-x-auto scrollbar-hide"
         style={{
           scrollbarWidth: 'none',
-          msOverflowStyle: 'none',
-          WebkitScrollbar: { display: 'none' }
+          msOverflowStyle: 'none'
         }}
       >
         {capabilities.map((capability, index) => (
